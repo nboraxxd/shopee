@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    height: 100%;
+    line-height: 1.2;
+  }
+
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 400;
+  }
+
+  html {
+    --icon-primary: brightness(0) saturate(100%) invert(33%) sepia(60%) saturate(1174%) hue-rotate(333deg)
+      brightness(110%) contrast(105%);
+  }
+}
+@layer utilities {
+  .filter-primary {
+    filter: var(--icon-primary);
+  }
+
+  .focus-primary {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/50;
+  }
+}
