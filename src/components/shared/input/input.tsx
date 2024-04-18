@@ -1,8 +1,10 @@
 import { useState } from 'react'
 
 import { cn } from '@/utils'
+import { UseFormRegisterReturn } from 'react-hook-form'
 
-interface Props extends React.ComponentPropsWithoutRef<'input'> {
+interface Props<T extends string> extends React.ComponentPropsWithoutRef<'input'> {
+  register?: UseFormRegisterReturn<T>
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
@@ -10,8 +12,16 @@ interface Props extends React.ComponentPropsWithoutRef<'input'> {
   classNameEye?: string
 }
 
-export default function Input(props: Props) {
-  const { errorMessage, classNameWrapper = 'mt-2', classNameInput, classNameError, classNameEye, ...rest } = props
+export default function Input<T extends string>(props: Props<T>) {
+  const {
+    register,
+    errorMessage,
+    classNameWrapper = 'mt-2',
+    classNameInput,
+    classNameError,
+    classNameEye,
+    ...rest
+  } = props
 
   const [openEye, setOpenEye] = useState(false)
 
@@ -28,6 +38,7 @@ export default function Input(props: Props) {
         className={cn('w-full rounded-sm border border-gray-300 outline-none focus:shadow-sm', classNameInput)}
         {...rest}
         type={handleType()}
+        {...register}
       />
 
       {/* Eye */}
