@@ -11,7 +11,7 @@ export default function Button({ children, className, isLoading, disabled, ...re
   return (
     <button
       className={cn(
-        'focus-primary flex items-center justify-center gap-2 rounded-sm bg-primary px-2 py-4 text-center text-white transition-colors hover:bg-primary/[0.91] disabled:cursor-not-allowed disabled:bg-primary/70 disabled:text-gray-400',
+        'focus-primary flex items-center justify-center gap-2 rounded-sm bg-primary text-center text-white transition-colors hover:bg-primary/[0.91] disabled:cursor-not-allowed disabled:bg-primary/70 disabled:text-gray-400',
         className,
         {
           'flex items-center justify-center gap-1': isLoading,

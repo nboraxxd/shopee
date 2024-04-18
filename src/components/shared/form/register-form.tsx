@@ -1,17 +1,20 @@
-import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { registerSchema } from '@/lib/schemas/auth.schema'
+import { ErrorResponse } from '@/types/utils.type'
+import { isAxiosUnprocessableEntityError } from '@/utils/error'
+import { useRegister } from '@/lib/react-query'
+import { RegisterSchemaType, registerSchema } from '@/lib/schemas/auth.schema'
 import { Input } from '@/components/shared/input'
 import { Button } from '@/components/shared/button'
 
 export default function RegisterForm() {
   const {
-    handleSubmit,
     register,
+    handleSubmit,
+    setError,
     formState: { errors },
-  } = useForm<z.infer<typeof registerSchema>>({
+  } = useForm<RegisterSchemaType>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: '',
@@ -20,8 +23,34 @@ export default function RegisterForm() {
     },
   })
 
-  function onValid(data: z.infer<typeof registerSchema>) {
-    console.log(data)
+  const { mutate } = useRegister()
+
+  function onValid(data: RegisterSchemaType) {
+    const { email, password } = data
+
+    mutate(
+      { email, password },
+      {
+        onSuccess: (data) => {
+          console.log(data)
+        },
+        onError: (error) => {
+          if (isAxiosUnprocessableEntityError<ErrorResponse<Omit<RegisterSchemaType, 'confirm_password'>>>(error)) {
+            const formErrors = error.response?.data.data
+
+            if (formErrors) {
+              Object.keys(formErrors).forEach((key) => {
+                const formError = formErrors[key as keyof typeof formErrors]
+                setError(key as keyof Omit<RegisterSchemaType, 'confirm_password'>, {
+                  type: 'server',
+                  message: formError,
+                })
+              })
+            }
+          }
+        },
+      }
+    )
   }
 
   return (
@@ -60,7 +89,7 @@ export default function RegisterForm() {
         classNameEye="absolute right-2 top-3 size-5 cursor-pointer text-gray-500"
       />
       {/* Button */}
-      <Button className="mt-2 w-full text-sm uppercase">Đăng ký</Button>
+      <Button className="mt-2 min-h-10 w-full px-2.5 text-sm uppercase">Đăng ký</Button>
     </form>
   )
 }
